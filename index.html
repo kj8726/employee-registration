@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        .form-container {
+            background-color: white;
+            padding: 2rem; /* Tailwind p-8 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind shadow-lg */
+            max-width: 600px;
+            margin: 2rem auto; /* Centering and margin */
+        }
+        .form-input {
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            padding: 0.75rem 1rem; /* Tailwind py-3 px-4 */
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            width: 100%;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .form-input:focus {
+            border-color: #3b82f6; /* Tailwind blue-500 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* Focus ring */
+            outline: none;
+        }
+        .submit-btn {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+            color: white;
+            padding: 0.75rem 1.5rem; /* Tailwind py-3 px-6 */
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            font-weight: 500; /* Tailwind font-medium */
+            transition: background-color 0.2s ease-in-out;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background-color: #2563eb; /* Tailwind blue-600 */
+        }
+        .submit-btn:disabled {
+            background-color: #9ca3af; /* Tailwind gray-400 */
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: #ef4444; /* Tailwind red-500 */
+            font-size: 0.875rem; /* Tailwind text-sm */
+            margin-top: 0.25rem; /* Tailwind mt-1 */
+        }
+        .success-message {
+            background-color: #d1fae5; /* Tailwind green-100 */
+            color: #065f46; /* Tailwind green-800 */
+            padding: 1rem; /* Tailwind p-4 */
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            margin-top: 1rem; /* Tailwind mt-4 */
+            text-align: center;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3b82f6; /* Blue */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="form-container">
+        <header class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Employee Registration</h1>
+        </header>
+
+        <form id="registrationForm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" class="form-input" required>
+                    <p id="fullNameError" class="error-message"></p>
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                    <p id="emailError" class="error-message"></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="employeeId" class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
+                    <input type="text" id="employeeId" name="employeeId" class="form-input" required>
+                    <p id="employeeIdError" class="error-message"></p>
+                </div>
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                    <select id="department" name="department" class="form-input" required>
+                        <option value="">Select Department</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Human Resources">Human Resources</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Finance">Finance</option>
+                    </select>
+                    <p id="departmentError" class="error-message"></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="position" class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                    <input type="text" id="position" name="position" class="form-input" required>
+                    <p id="positionError" class="error-message"></p>
+                </div>
+                <div>
+                    <label for="dateOfJoining" class="block text-sm font-medium text-gray-700 mb-1">Date of Joining</label>
+                    <input type="date" id="dateOfJoining" name="dateOfJoining" class="form-input" required>
+                    <p id="dateOfJoiningError" class="error-message"></p>
+                </div>
+            </div>
+
+            <div id="formMessage" class="mb-4"></div>
+
+            <button type="submit" id="submitButton" class="submit-btn flex items-center justify-center">
+                <span id="buttonText">Register Employee</span>
+                <div id="loadingSpinner" class="loading-spinner hidden ml-2"></div>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Client-side JavaScript for form handling and validation
+        const registrationForm = document.getElementById('registrationForm');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const formMessage = document.getElementById('formMessage');
+
+        // Input fields and their corresponding error message elements
+        const fields = {
+            fullName: document.getElementById('fullName'),
+            email: document.getElementById('email'),
+            employeeId: document.getElementById('employeeId'),
+            department: document.getElementById('department'),
+            position: document.getElementById('position'),
+            dateOfJoining: document.getElementById('dateOfJoining'),
+        };
+
+        const errorElements = {
+            fullName: document.getElementById('fullNameError'),
+            email: document.getElementById('emailError'),
+            employeeId: document.getElementById('employeeIdError'),
+            department: document.getElementById('departmentError'),
+            position: document.getElementById('positionError'),
+            dateOfJoining: document.getElementById('dateOfJoiningError'),
+        };
+
+        /**
+         * Validates a single field.
+         * @param {string} fieldName - The name of the field to validate.
+         * @returns {boolean} - True if valid, false otherwise.
+         */
+        function validateField(fieldName) {
+            const field = fields[fieldName];
+            const errorElement = errorElements[fieldName];
+            let isValid = true;
+            errorElement.textContent = ''; // Clear previous error
+
+            if (!field.value.trim()) {
+                errorElement.textContent = `${fieldName.replace(/([A-Z])/g, ' $1').trim()} is required.`;
+                isValid = false;
+            } else if (fieldName === 'email' && !/^\S+@\S+\.\S+$/.test(field.value)) {
+                errorElement.textContent = 'Please enter a valid email address.';
+                isValid = false;
+            }
+            // Add more specific validations if needed (e.g., Employee ID format)
+            return isValid;
+        }
+
+        /**
+         * Validates the entire form.
+         * @returns {boolean} - True if all fields are valid, false otherwise.
+         */
+        function validateForm() {
+            let isFormValid = true;
+            for (const fieldName in fields) {
+                if (!validateField(fieldName)) {
+                    isFormValid = false;
+                }
+            }
+            return isFormValid;
+        }
+
+        // Add real-time validation on input/change
+        for (const fieldName in fields) {
+            fields[fieldName].addEventListener('input', () => validateField(fieldName));
+            if (fields[fieldName].tagName === 'SELECT') {
+                 fields[fieldName].addEventListener('change', () => validateField(fieldName));
+            }
+        }
+
+        registrationForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            formMessage.innerHTML = ''; // Clear previous messages
+            if (!validateForm()) {
+                formMessage.innerHTML = '<p class="error-message text-center font-semibold">Please correct the errors in the form.</p>';
+                return;
+            }
+
+            // Show loading state
+            submitButton.disabled = true;
+            buttonText.textContent = 'Registering...';
+            loadingSpinner.classList.remove('hidden');
+
+            const formData = new FormData(registrationForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    formMessage.innerHTML = `<div class="success-message">${result.message} (Employee ID: ${result.employee.employeeId})</div>`;
+                    registrationForm.reset(); // Clear the form
+                    // Clear individual error messages as well
+                    for (const fieldName in errorElements) {
+                        errorElements[fieldName].textContent = '';
+                    }
+                } else {
+                    formMessage.innerHTML = `<p class="error-message text-center font-semibold">${result.message || 'An error occurred during registration.'}</p>`;
+                    if (result.errors) { // Display specific field errors from server
+                        for (const key in result.errors) {
+                            if (errorElements[key]) {
+                                errorElements[key].textContent = result.errors[key].msg;
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                formMessage.innerHTML = '<p class="error-message text-center font-semibold">A network error occurred. Please try again.</p>';
+            } finally {
+                // Reset button state
+                submitButton.disabled = false;
+                buttonText.textContent = 'Register Employee';
+                loadingSpinner.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
